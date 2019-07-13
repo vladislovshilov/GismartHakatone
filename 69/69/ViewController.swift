@@ -98,6 +98,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         if let hit = hitResults.first {
             if let node = getParent(hit.node) {
                 node.removeFromParentNode()
+                self.dismiss(animated: true, completion: nil)
                 return
             }
         }

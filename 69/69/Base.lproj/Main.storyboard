@@ -10,10 +10,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Map View Controller-->
         <scene sceneID="aQ4-aQ-Qxo">
             <objects>
-                <viewController id="I7i-HY-5Ph" sceneMemberID="viewController">
+                <viewController id="I7i-HY-5Ph" customClass="MapViewController" customModule="_9" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="rJ7-L0-jov">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -23,12 +23,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0jI-3C-FUx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-658" y="82"/>
+            <point key="canvasLocation" x="-1410" y="727"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="tXr-a1-R10">
             <objects>
-                <viewController id="BV1-FR-VrT" customClass="ViewController" customModule="_9" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ViewController" modalTransitionStyle="crossDissolve" id="BV1-FR-VrT" customClass="ViewController" customModule="_9" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="U0K-SW-4ec">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -42,9 +42,6 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="slingshot" translatesAutoresizingMaskIntoConstraints="NO" id="oRA-Eb-Oz9">
-                                <rect key="frame" x="0.0" y="503.5" width="414" height="358.5"/>
-                            </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="54°" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="f2c-jj-25T">
                                 <rect key="frame" x="16" y="166.5" width="382" height="70.5"/>
                                 <fontDescription key="fontDescription" name="Futura-Medium" family="Futura" pointSize="54"/>
@@ -55,17 +52,13 @@
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="ebt-UE-MBF" firstAttribute="top" secondItem="fQZ-KI-GVf" secondAttribute="top" constant="8" id="2Pv-KH-Aau"/>
-                            <constraint firstItem="oRA-Eb-Oz9" firstAttribute="trailing" secondItem="fQZ-KI-GVf" secondAttribute="trailing" id="85E-24-hvL"/>
-                            <constraint firstItem="oRA-Eb-Oz9" firstAttribute="leading" secondItem="fQZ-KI-GVf" secondAttribute="leading" id="DWv-gg-yde"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="leading" secondItem="fQZ-KI-GVf" secondAttribute="leading" id="GsS-dJ-CKf"/>
                             <constraint firstItem="fQZ-KI-GVf" firstAttribute="trailing" secondItem="f2c-jj-25T" secondAttribute="trailing" constant="16" id="OW6-qM-tZn"/>
-                            <constraint firstItem="oRA-Eb-Oz9" firstAttribute="height" secondItem="U0K-SW-4ec" secondAttribute="height" multiplier="1/2.5" id="PwE-QA-sQG"/>
                             <constraint firstItem="ebt-UE-MBF" firstAttribute="leading" secondItem="fQZ-KI-GVf" secondAttribute="leading" constant="16" id="Sv9-xv-zKb"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="bottom" secondItem="fQZ-KI-GVf" secondAttribute="bottom" id="VpT-BR-CcM"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="trailing" secondItem="fQZ-KI-GVf" secondAttribute="trailing" id="XyZ-9z-H8e"/>
                             <constraint firstItem="f2c-jj-25T" firstAttribute="top" secondItem="ebt-UE-MBF" secondAttribute="bottom" id="b7x-aP-zF2"/>
                             <constraint firstItem="f2c-jj-25T" firstAttribute="leading" secondItem="fQZ-KI-GVf" secondAttribute="leading" constant="16" id="fMn-18-TvB"/>
-                            <constraint firstItem="fQZ-KI-GVf" firstAttribute="bottom" secondItem="oRA-Eb-Oz9" secondAttribute="bottom" id="gQP-yM-6N3"/>
                             <constraint firstItem="fQZ-KI-GVf" firstAttribute="trailing" secondItem="ebt-UE-MBF" secondAttribute="trailing" constant="16" id="nHv-HX-lfV"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="top" secondItem="U0K-SW-4ec" secondAttribute="top" id="rJc-2c-zQA"/>
                         </constraints>
@@ -79,9 +72,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="-599" y="727"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="slingshot" width="274" height="534"/>
-    </resources>
 </document>
