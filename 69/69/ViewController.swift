@@ -17,6 +17,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @IBOutlet weak var distanceLabel: UILabel!
     @IBOutlet weak var angleLabel: UILabel!
     
+    var nodeModel:SCNNode!
+    let nodeName = "Circle_001"
+    
     private let motion = CMMotionManager()
     private var timer: Timer!
     private var lastAccData: CMAccelerometerData?
@@ -31,10 +34,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.showsStatistics = true
         
         // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
-        
-        // Set the scene to the view
+        let scene = SCNScene()
         sceneView.scene = scene
+        
+        let modelScene = SCNScene(named: "test.scnassets/CoffeeCup.scn")!
+        nodeModel = modelScene.rootNode.childNode(
+            withName: nodeName, recursively: true)
+        nodeModel.scale = SCNVector3(x: 0.1, y: 0.1, z: 0.1)
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -80,6 +87,57 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func sessionInterruptionEnded(_ session: ARSession) {
         // Reset tracking and/or remove existing anchors if consistent tracking is required
         
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        let location = touches.first!.location(in: sceneView)
+        var hitTestOptions = [SCNHitTestOption: Any]()
+        hitTestOptions[SCNHitTestOption.boundingBoxOnly] = true
+        let hitResults: [SCNHitTestResult]  =
+            sceneView.hitTest(location, options: hitTestOptions)
+        if let hit = hitResults.first {
+            if let node = getParent(hit.node) {
+                node.removeFromParentNode()
+                return
+            }
+        }
+        
+        let hitResultsFeaturePoints: [ARHitTestResult] =
+            sceneView.hitTest(location, types: .featurePoint)
+        if let hit = hitResultsFeaturePoints.first {
+            // Get a transformation matrix with the euler angle of the camera
+            let rotate = simd_float4x4(SCNMatrix4MakeRotation(sceneView.session.currentFrame!.camera.eulerAngles.y, 0, 1, 0))
+            
+            // Combine both transformation matrices
+            let finalTransform = simd_mul(hit.worldTransform, rotate)
+            
+            // Use the resulting matrix to position the anchor
+            sceneView.session.add(anchor: ARAnchor(transform: finalTransform))
+            // sceneView.session.add(anchor: ARAnchor(transform: hit.worldTransform))
+        }
+    }
+    
+    func getParent(_ nodeFound: SCNNode?) -> SCNNode? {
+        if let node = nodeFound {
+            if node.name == nodeName {
+                return node
+            } else if let parent = node.parent {
+                return getParent(parent)
+            }
+        }
+        return nil
+    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        if !anchor.isKind(of: ARPlaneAnchor.self) {
+            DispatchQueue.main.async {
+                let modelClone = self.nodeModel.clone()
+                modelClone.position = SCNVector3Zero
+                
+                // Add model as a child of the node
+                node.addChildNode(modelClone)
+            }
+        }
     }
 }
 
