@@ -11,14 +11,17 @@ import SceneKit
 import ARKit
 import CoreMotion
 
-class ViewController: UIViewController, ARSCNViewDelegate {
+final class ViewController: UIViewController,
+                            ARSCNViewDelegate {
     
-    @IBOutlet var sceneView: ARSCNView!
-    @IBOutlet weak var distanceLabel: UILabel!
-    @IBOutlet weak var angleLabel: UILabel!
+    @IBOutlet private var sceneView: ARSCNView!
+    @IBOutlet private weak var distanceLabel: UILabel!
+    @IBOutlet private weak var angleLabel: UILabel!
     
-    var nodeModel:SCNNode!
-    let nodeName = "Circle_001"
+    private var grids = [Grid]()
+    
+    private var nodeModel: SCNNode!
+    private let nodeName = "Circle_001"
     
     private let motion = CMMotionManager()
     private var timer: Timer!
@@ -27,21 +30,16 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Set the view's delegate
-        sceneView.delegate = self
-        
-        // Show statistics such as fps and timing information
-        sceneView.showsStatistics = true
-        
-        // Create a new scene
         let scene = SCNScene()
+        sceneView.delegate = self
+        sceneView.showsStatistics = true
+        sceneView.debugOptions = ARSCNDebugOptions.showFeaturePoints
         sceneView.scene = scene
         
         let modelScene = SCNScene(named: "test.scnassets/CoffeeCup.scn")!
         nodeModel = modelScene.rootNode.childNode(
             withName: nodeName, recursively: true)
         nodeModel.scale = SCNVector3(x: 0.1, y: 0.1, z: 0.1)
-
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -50,6 +48,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Create a session configuration
         let configuration = ARWorldTrackingConfiguration()
+        configuration.planeDetection = .horizontal
         
         // Run the view's session
         sceneView.session.run(configuration)
@@ -118,7 +117,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
-    func getParent(_ nodeFound: SCNNode?) -> SCNNode? {
+    private func getParent(_ nodeFound: SCNNode?) -> SCNNode? {
         if let node = nodeFound {
             if node.name == nodeName {
                 return node
@@ -129,28 +128,49 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         return nil
     }
     
+//    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+//        if !anchor.isKind(of: ARPlaneAnchor.self) {
+//            DispatchQueue.main.async {
+//                let modelClone = self.nodeModel.clone()
+//                modelClone.position = SCNVector3Zero
+//
+//                // Add model as a child of the node
+//                node.addChildNode(modelClone)
+//            }
+//        }
+//    }
+    
+    
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        if !anchor.isKind(of: ARPlaneAnchor.self) {
-            DispatchQueue.main.async {
-                let modelClone = self.nodeModel.clone()
-                modelClone.position = SCNVector3Zero
-                
-                // Add model as a child of the node
-                node.addChildNode(modelClone)
-            }
+        if let planeAnchor = anchor as? ARPlaneAnchor {
+            let grid = Grid(anchor: planeAnchor)
+            self.grids.append(grid)
+            node.addChildNode(grid)
         }
+    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+        let grid = self.grids.filter { grid in
+            return grid.anchor.identifier == anchor.identifier
+            }.first
+        
+        guard let foundGrid = grid else {
+            return
+        }
+        
+        foundGrid.update(anchor: anchor as! ARPlaneAnchor)
     }
 }
 
 // MARK: - Gyroscope
 
 extension ViewController {
-    func startAccelerometers() {
+    private func startAccelerometers() {
         if self.motion.isAccelerometerAvailable {
-            self.motion.accelerometerUpdateInterval = 1.0  // 1 Hz
+            self.motion.accelerometerUpdateInterval = 1.0 / 10  // 10 Hz
             self.motion.startAccelerometerUpdates()
             
-            self.timer = Timer(fire: Date(), interval: 1.0,
+            self.timer = Timer(fire: Date(), interval: 1.0 / 10,
                                repeats: true, block: { [weak self] timer in
                                 guard let `self` = self, let data = self.motion.accelerometerData else { return }
                                 self.updateAccelerationData(data)
@@ -160,7 +180,7 @@ extension ViewController {
         }
     }
     
-    func stopAccelerometers() {
+    private func stopAccelerometers() {
         if self.timer != nil {
             self.timer?.invalidate()
             self.timer = nil
@@ -183,7 +203,7 @@ extension ViewController {
         print(roll)
         print(pitch)
         
-        let angle = 90 + roll.rounded()
+        let angle = 90 + Int(roll.rounded())
         
         DispatchQueue.main.async { [weak self] in
             guard let `self` = self else { return }
