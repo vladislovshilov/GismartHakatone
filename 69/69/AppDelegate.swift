@@ -19,6 +19,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         GMSServices.provideAPIKey("AIzaSyAFgz_q0xH0rLEq_cTxD75O7andTOsvf5Y")
         
+        window = UIWindow(frame: UIScreen.main.bounds)
+        let coordinator = Coordinator(window: window!)
+        coordinator.start()
+        
         return true
     }
 

@@ -13,7 +13,7 @@
         <!--Map View Controller-->
         <scene sceneID="aQ4-aQ-Qxo">
             <objects>
-                <viewController id="I7i-HY-5Ph" customClass="MapViewController" customModule="_9" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MapViewController" id="I7i-HY-5Ph" customClass="MapViewController" customModule="_9" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="rJ7-L0-jov">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -28,7 +28,7 @@
         <!--Game View Controller-->
         <scene sceneID="tXr-a1-R10">
             <objects>
-                <viewController storyboardIdentifier="ViewController" modalTransitionStyle="crossDissolve" id="BV1-FR-VrT" customClass="GameViewController" customModule="_9" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="GameViewController" modalTransitionStyle="crossDissolve" id="BV1-FR-VrT" customClass="GameViewController" customModule="_9" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="U0K-SW-4ec">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

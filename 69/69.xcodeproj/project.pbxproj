@@ -13,9 +13,13 @@
 		51116B4522D9F8D30094F01F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51116B4322D9F8D30094F01F /* Main.storyboard */; };
 		51116B4722D9F8D40094F01F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51116B4622D9F8D40094F01F /* Assets.xcassets */; };
 		51116B4A22D9F8D40094F01F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51116B4822D9F8D40094F01F /* LaunchScreen.storyboard */; };
-		51116B5222D9F9E20094F01F /* FloatiingPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51116B5122D9F9E20094F01F /* FloatiingPoint.swift */; };
 		51116B5622DA07FA0094F01F /* test.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 51116B5522DA07FA0094F01F /* test.scnassets */; };
 		51116B5C22DA21940094F01F /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51116B5B22DA21940094F01F /* MapViewController.swift */; };
+		512EA49622DB41600056E8C1 /* SlingshotType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512EA49522DB41600056E8C1 /* SlingshotType.swift */; };
+		512EA49822DB41D70056E8C1 /* GameConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512EA49722DB41D70056E8C1 /* GameConfiguration.swift */; };
+		512EA49C22DB43340056E8C1 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512EA49B22DB43340056E8C1 /* UIViewController.swift */; };
+		512EA49E22DB434A0056E8C1 /* UIStoryboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512EA49D22DB434A0056E8C1 /* UIStoryboard.swift */; };
+		512EA4A422DB45EF0056E8C1 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512EA4A322DB45EF0056E8C1 /* Coordinator.swift */; };
 		81270D720EEF2CC87D0A6EF0 /* Pods_69.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8519DE2F853E0F48712C4E1C /* Pods_69.framework */; };
 /* End PBXBuildFile section */
 
@@ -29,9 +33,13 @@
 		51116B4622D9F8D40094F01F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		51116B4922D9F8D40094F01F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		51116B4B22D9F8D40094F01F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		51116B5122D9F9E20094F01F /* FloatiingPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatiingPoint.swift; sourceTree = "<group>"; };
 		51116B5522DA07FA0094F01F /* test.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = test.scnassets; sourceTree = "<group>"; };
 		51116B5B22DA21940094F01F /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		512EA49522DB41600056E8C1 /* SlingshotType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlingshotType.swift; sourceTree = "<group>"; };
+		512EA49722DB41D70056E8C1 /* GameConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameConfiguration.swift; sourceTree = "<group>"; };
+		512EA49B22DB43340056E8C1 /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
+		512EA49D22DB434A0056E8C1 /* UIStoryboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIStoryboard.swift; sourceTree = "<group>"; };
+		512EA4A322DB45EF0056E8C1 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		5281320AD4EB8E07BC7B5E85 /* Pods-69.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-69.debug.xcconfig"; path = "Pods/Target Support Files/Pods-69/Pods-69.debug.xcconfig"; sourceTree = "<group>"; };
 		8519DE2F853E0F48712C4E1C /* Pods_69.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_69.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -81,9 +89,11 @@
 				51116B3D22D9F8D30094F01F /* AppDelegate.swift */,
 				51116B5522DA07FA0094F01F /* test.scnassets */,
 				51116B3F22D9F8D30094F01F /* art.scnassets */,
+				512EA4A322DB45EF0056E8C1 /* Coordinator.swift */,
 				51116B5B22DA21940094F01F /* MapViewController.swift */,
 				51116B4122D9F8D30094F01F /* GameViewController.swift */,
 				51116B4322D9F8D30094F01F /* Main.storyboard */,
+				512EA49F22DB43C80056E8C1 /* Model */,
 				51116B5322D9F9E70094F01F /* Extensions */,
 				51116B5D22DA26270094F01F /* Resources */,
 			);
@@ -93,7 +103,7 @@
 		51116B5322D9F9E70094F01F /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				51116B5122D9F9E20094F01F /* FloatiingPoint.swift */,
+				512EA49A22DB430C0056E8C1 /* UIKit */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -106,6 +116,24 @@
 				51116B4B22D9F8D40094F01F /* Info.plist */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		512EA49A22DB430C0056E8C1 /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				512EA49B22DB43340056E8C1 /* UIViewController.swift */,
+				512EA49D22DB434A0056E8C1 /* UIStoryboard.swift */,
+			);
+			path = UIKit;
+			sourceTree = "<group>";
+		};
+		512EA49F22DB43C80056E8C1 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				512EA49722DB41D70056E8C1 /* GameConfiguration.swift */,
+				512EA49522DB41600056E8C1 /* SlingshotType.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		EFAF118F3CDA6B090142D27E /* Frameworks */ = {
@@ -238,10 +266,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				51116B5222D9F9E20094F01F /* FloatiingPoint.swift in Sources */,
+				512EA49C22DB43340056E8C1 /* UIViewController.swift in Sources */,
+				512EA49622DB41600056E8C1 /* SlingshotType.swift in Sources */,
 				51116B4222D9F8D30094F01F /* GameViewController.swift in Sources */,
+				512EA49E22DB434A0056E8C1 /* UIStoryboard.swift in Sources */,
 				51116B3E22D9F8D30094F01F /* AppDelegate.swift in Sources */,
+				512EA49822DB41D70056E8C1 /* GameConfiguration.swift in Sources */,
 				51116B5C22DA21940094F01F /* MapViewController.swift in Sources */,
+				512EA4A422DB45EF0056E8C1 /* Coordinator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

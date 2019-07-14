@@ -11,8 +11,15 @@ import SceneKit
 import ARKit
 import CoreMotion
 
+protocol IGameScene: UIViewController {
+    var onShotHandler: ((_ configurations: GameConfiguration?) -> Void)? { get set }
+    
+    var gameConfiguration: GameConfiguration? { get set }
+}
+
 final class GameViewController: UIViewController,
-                                ARSCNViewDelegate {
+                                ARSCNViewDelegate,
+                                IGameScene {
     
     // MARK: - IBOutlet's
     @IBOutlet private var sceneView: ARSCNView!
@@ -26,6 +33,8 @@ final class GameViewController: UIViewController,
     @IBOutlet private weak var weaponAmountLabel: UILabel!
     
     // MARK: - Properties
+    var gameConfiguration: GameConfiguration?
+    
     private let sceneNames = ["CoffeeV", "CoffeeH"]
     private let nodeName = "Coffee"
     
@@ -37,6 +46,9 @@ final class GameViewController: UIViewController,
     private var motion: CMMotionManager!
     private var timer: Timer!
     private var animationTimer: Timer!
+    
+    // MARK: Flow handler
+    var onShotHandler: ((_ configurations: GameConfiguration?) -> Void)?
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -101,6 +113,8 @@ extension GameViewController {
     }
     
     private func stopPowerPointAnimation() {
+        onShotHandler?(gameConfiguration)
+        
         cancelAnimationTimer()
     }
     
@@ -130,6 +144,8 @@ extension GameViewController {
         else {
             power -= 1
         }
+        
+        updateGamePower()
         updateAnimation()
     }
     
@@ -140,6 +156,11 @@ extension GameViewController {
             let newPoint = (self.maxPoint - self.minPoint) / 100.0 * self.power
             self.powerPointImage.center.y = newPoint + self.powerPointImage.frame.height
         }
+    }
+    
+    private func updateGamePower() {
+        let actualPower = abs(Int(power) - 50) * 2
+        gameConfiguration?.power = actualPower
     }
     
     // MARK: UITapGestureRecognizer
@@ -253,9 +274,11 @@ extension GameViewController {
             guard let `self` = self else { return }
             if angle < 0 || angle > 90 {
                 self.angleLabel.text = "0°"
+                self.gameConfiguration?.angle = 0
             }
             else {
                 self.angleLabel.text = "\(angle)°"
+                self.gameConfiguration?.angle = angle
             }
         }
     }
