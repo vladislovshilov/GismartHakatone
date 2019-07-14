@@ -18,10 +18,11 @@ protocol IMapScene: UIViewController {
 }
 
 final class MapViewController: UIViewController,
-                               IMapScene {
+IMapScene {
     // MARK: - Properties
     private var mapView: GMSMapView?
     private var playersMarkers = [GMSMarker]()
+    private var chickenMarker: GMSMarker?
     
     private var enemyPlayer: Player?
     
@@ -48,6 +49,7 @@ final class MapViewController: UIViewController,
         let cameraUpdate = GMSCameraUpdate.fit(boundingBox)
         
         mapView?.moveCamera(cameraUpdate)
+        showCheckinAnimation(from: currentLocation, to: enemyLocation)
     }
     
     // MARK: - Support methods
@@ -68,6 +70,42 @@ final class MapViewController: UIViewController,
             marker.map = mapView
             playersMarkers.append(marker)
         }
+    }
+    
+    private func showCheckinAnimation(from startCoordinates: CLLocationCoordinate2D, to endCoordinates: CLLocationCoordinate2D) {
+        if chickenMarker == nil {
+            chickenMarker = GMSMarker()
+            chickenMarker!.position = startCoordinates
+            let image = UIImage(named:"chicken")
+            chickenMarker!.icon = image
+            chickenMarker!.setIconSize(scaledToSize: CGSize(width: 40, height: 50))
+            chickenMarker!.map = mapView
+            chickenMarker!.appearAnimation = .pop
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                guard let `self` = self else { return }
+                CATransaction.begin()
+                CATransaction.setAnimationDuration(2.0)
+                self.chickenMarker!.position = endCoordinates
+                CATransaction.commit()
+                CATransaction.setCompletionBlock({
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                        self?.chickenMarker?.map = nil
+                        self?.chickenMarker = nil
+                    }
+                })
+            }
+        }
+    }
+}
+
+extension GMSMarker {
+    func setIconSize(scaledToSize newSize: CGSize) {
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
+        icon?.draw(in: CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height))
+        let newImage: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        icon = newImage
     }
 }
 
