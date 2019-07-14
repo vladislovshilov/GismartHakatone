@@ -86,34 +86,16 @@ ARSCNViewDelegate {
         // Reset tracking and/or remove existing anchors if consistent tracking is required
         
     }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //        let location = touches.first!.location(in: sceneView)
-        //        var hitTestOptions = [SCNHitTestOption: Any]()
-        //        hitTestOptions[SCNHitTestOption.boundingBoxOnly] = true
-        //        let hitResults: [SCNHitTestResult]  =
-        //            sceneView.hitTest(location, options: hitTestOptions)
-        //        if let hit = hitResults.first {
-        //            if let node = getParent(hit.node) {
-        //                node.removeFromParentNode()
-        //                self.dismiss(animated: true, completion: nil)
-        //                return
-        //            }
-        //        }
-        //
-        //        let hitResultsFeaturePoints: [ARHitTestResult] =
-        //            sceneView.hitTest(location, types: .featurePoint)
-        //        if let hit = hitResultsFeaturePoints.first {
-        //            // Get a transformation matrix with the euler angle of the camera
-        //            let rotate = simd_float4x4(SCNMatrix4MakeRotation(sceneView.session.currentFrame!.camera.eulerAngles.y, 0, 1, 0))
-        //
-        //            // Combine both transformation matrices
-        //            let finalTransform = simd_mul(hit.worldTransform, rotate)
-        //
-        //            // Use the resulting matrix to position the anchor
-        //            sceneView.session.add(anchor: ARAnchor(transform: finalTransform))
-        //            // sceneView.session.add(anchor: ARAnchor(transform: hit.worldTransform))
-        //        }
+
+    @objc private func tapped(gesture: UITapGestureRecognizer) {
+        if let node = nodeOnTap(gesture) {
+            node.removeFromParentNode()
+            self.dismiss(animated: true, completion: nil)
+            return
+        }
+        else {
+            addGarbageOnScene(on: gesture)
+        }
     }
     
     private func getParent(_ nodeFound: SCNNode?) -> SCNNode? {
@@ -127,48 +109,27 @@ ARSCNViewDelegate {
         return nil
     }
     
-    //    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-    //        if !anchor.isKind(of: ARPlaneAnchor.self) {
-    //            DispatchQueue.main.async {
-    //                let modelClone = self.nodeModel.clone()
-    //                modelClone.position = SCNVector3Zero
-    //
-    //                // Add model as a child of the node
-    //                node.addChildNode(modelClone)
-    //            }
-    //        }
-    //    }
+    private func nodeOnTap(_ tap: UITapGestureRecognizer) -> SCNNode? {
+        let location = tap.location(in: sceneView)
+        var hitTestOptions = [SCNHitTestOption: Any]()
+        hitTestOptions[SCNHitTestOption.boundingBoxOnly] = true
+        let hitResults: [SCNHitTestResult]  =
+            sceneView.hitTest(location, options: hitTestOptions)
+        
+        if let hit = hitResults.first {
+            return getParent(hit.node)
+        }
+        
+        return nil
+    }
     
-    
-    //    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-    //        if let planeAnchor = anchor as? ARPlaneAnchor {
-    //            let grid = Grid(anchor: planeAnchor)
-    //            self.grids.append(grid)
-    //            node.addChildNode(grid)
-    //        }
-    //    }
-    //
-    //    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-    //        let grid = self.grids.filter { grid in
-    //            return grid.anchor.identifier == anchor.identifier
-    //            }.first
-    //
-    //        guard let foundGrid = grid else {
-    //            return
-    //        }
-    //
-    //        foundGrid.update(anchor: anchor as! ARPlaneAnchor)
-    //    }
-    
-    @objc private func tapped(gesture: UITapGestureRecognizer) {
-        let touchPosition = gesture.location(in: sceneView)
+    private func addGarbageOnScene(on tap: UITapGestureRecognizer) {
+        let touchPosition = tap.location(in: sceneView)
         let hitTestResult = sceneView.hitTest(touchPosition, types: .existingPlaneUsingExtent)
         
         if !hitTestResult.isEmpty {
             guard let hitResult = hitTestResult.first else { return }
-            DispatchQueue.main.async { [weak self] in
-                self?.addGarbage(hitTestResult: hitResult)
-            }
+            addGarbage(hitTestResult: hitResult)
         }
     }
     
