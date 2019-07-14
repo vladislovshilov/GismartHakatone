@@ -12,7 +12,7 @@ import ARKit
 import CoreMotion
 
 final class ViewController: UIViewController,
-                            ARSCNViewDelegate {
+                            ARSCNViewDelegate, CAAnimationDelegate {
     
     @IBOutlet private var sceneView: ARSCNView!
     //@IBOutlet private weak var distanceLabel: UILabel!
@@ -23,14 +23,16 @@ final class ViewController: UIViewController,
     @IBOutlet private weak var powerIndicatorImage: UIImageView!
     @IBOutlet private weak var powerPointImage: UIImageView!
     
-    
     @IBOutlet private weak var weaponAmountLabel: UILabel!
     
     private let sceneNames = ["CoffeeV", "CoffeeH"]
     private let nodeName = "Coffee"
     
+    private var isPowerViewShouldAnimating = false
+    
     private var motion: CMMotionManager!
     private var timer: Timer!
+    private var animationTimer: Timer!
     private var lastAccData: CMAccelerometerData?
     
     override func viewDidLoad() {
@@ -96,37 +98,99 @@ final class ViewController: UIViewController,
         
     }
     
-    private func startAnimationPowerPoint() {
-        let minPoint = powerIndicatorImage.frame.origin.y
-        let maxPoint = minPoint + powerIndicatorImage.frame.height
-        
-        UIView.animate(withDuration: 1.0,
-                       animations: { () -> Void in
-                        self.powerPointImage.center.y = maxPoint
-                        
-        }, completion: { _ in
-            UIView.animate(withDuration: 2.0,
-                           delay: 0.0,
-                           options: [.autoreverse, .repeat],
-                           animations: { () -> Void in
-                            self.powerPointImage.center.y = minPoint
-                            
-            }, completion: { _ in
-                self.powerPointImage.center.y = self.powerIndicatorImage.center.y
-            })
-        })
+    private func createTimer() {
+        if animationTimer == nil {
+            animationTimer = Timer.scheduledTimer(timeInterval: 1.0/60,
+                                                  target: self,
+                                                  selector: #selector(updateTimer),
+                                                  userInfo: nil,
+                                                  repeats: true)
+            animationTimer?.tolerance = 0.1
+        }
     }
     
-    private func stopAnimationPowerPoint() {
-        powerPointImage.layer.removeAllAnimations()
+    private func cancelTimer() {
+        animationTimer?.invalidate()
+        animationTimer = nil
+    }
+    
+    var power: CGFloat = 50
+    var isPointMovesUp = true
+    var minPoint: CGFloat!
+    var maxPoint: CGFloat!
+    
+    @objc private func updateTimer() {
+        if power >= 100 { isPointMovesUp = false }
+        else if power <= 0 { isPointMovesUp = true }
+        
+        if isPointMovesUp {
+            power += 1
+        }
+        else {
+            power -= 1
+        }
+        updateAnimation()
+    }
+    
+    private func updateAnimation() {
+        DispatchQueue.main.async { [weak self] in
+            guard let `self` = self else { return }
+            
+            let newPoint = (self.maxPoint - self.minPoint) / 100.0 * self.power
+            print(self.power)
+            self.powerPointImage.center.y = newPoint
+        }
+    }
+
+    private func startPowerPointAnimation() {
+        minPoint = powerIndicatorImage.frame.origin.y
+        maxPoint = minPoint + powerIndicatorImage.frame.height
+        createTimer()
+        
+//        let x = powerIndicatorImage.frame.origin.x + powerPointImage.frame.width / 2
+//        let minPoint = powerIndicatorImage.frame.origin.y
+//        let maxPoint = minPoint + powerIndicatorImage.frame.height
+//        isPowerViewShouldAnimating = true
+//
+//        let animation = CABasicAnimation(keyPath: "position")
+//        animation.fromValue = CGPoint(x: x,
+//                                      y: minPoint)
+//        animation.toValue = CGPoint(x: x,
+//                                    y: maxPoint)
+//        animation.duration = 2
+//        animation.autoreverses = true
+//        animation.repeatCount = .infinity
+//        powerPointImage.layer.add(animation, forKey: nil)
+        
+//        UIView.animate(withDuration: 1.0,
+//                       animations: { () -> Void in
+//                        self.powerPointImage.center.y = maxPoint
+//
+//        }, completion: { _ in
+//            if !self.isPowerViewShouldAnimating { return }
+//            UIView.animate(withDuration: 2.0,
+//                           delay: 0.0,
+//                           options: [.autoreverse, .repeat],
+//                           animations: { () -> Void in
+//                            self.powerPointImage.center.y = minPoint
+//
+//            }, completion: { _ in
+//                print("comp \(self.powerPointImage.bounds.origin.y)")
+//                self.powerPointImage.center.y = self.powerIndicatorImage.center.y
+//            })
+//        })
+    }
+    
+    private func stopPowerPointAnimation() {
+        cancelTimer()
     }
     
     @objc private func longPressed(gesture: UITapGestureRecognizer) {
         switch gesture.state {
         case .began:
-            startAnimationPowerPoint()
+            startPowerPointAnimation()
         case .ended:
-            stopAnimationPowerPoint()
+            stopPowerPointAnimation()
         default:
             return
         }
@@ -192,7 +256,7 @@ final class ViewController: UIViewController,
     }
 }
 
-// MARK: - Gyroscope
+// MARK: - Accelerometer
 
 extension ViewController {
     private func startAccelerometers() {
