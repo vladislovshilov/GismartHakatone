@@ -14,6 +14,7 @@ import CoreMotion
 protocol IGameScene: UIViewController {
     var onShotHandler: ((_ configurations: GameConfiguration?) -> Void)? { get set }
     
+    var enemyPlayer: Player! { get set }
     var gameConfiguration: GameConfiguration? { get set }
 }
 
@@ -27,12 +28,14 @@ final class GameViewController: UIViewController,
     @IBOutlet private weak var projectileView: UIView!
     @IBOutlet private weak var projectileImage: UIImageView!
     
+    @IBOutlet private weak var powerIndicatorContainerView: UIView!
     @IBOutlet private weak var powerIndicatorImage: UIImageView!
     @IBOutlet private weak var powerPointImage: UIImageView!
     
     @IBOutlet private weak var weaponAmountLabel: UILabel!
     
     // MARK: - Properties
+    var enemyPlayer: Player!
     var gameConfiguration: GameConfiguration?
     
     private let sceneNames = ["CoffeeV", "CoffeeH"]
@@ -53,6 +56,8 @@ final class GameViewController: UIViewController,
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        powerIndicatorContainerView.isHidden = true
+        
         motion = CMMotionManager()
         
         let scene = SCNScene()
@@ -107,8 +112,10 @@ final class GameViewController: UIViewController,
 extension GameViewController {
     // MARK: Power indicator animation
     private func startPowerPointAnimation() {
+        powerIndicatorContainerView.isHidden = false
         minPoint = powerIndicatorImage.frame.origin.y
         maxPoint = minPoint + powerIndicatorImage.frame.height
+        
         createAnimationTimer()
     }
     

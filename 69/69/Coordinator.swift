@@ -37,21 +37,24 @@ extension Coordinator: Coordinatable {
         mapScene?.gameConfiguration = gameConfigurations
         mapScene?.players = createPlayers()
         
-        mapScene?.onGameStartHandler = {
-            self.showGameScene()
+        mapScene?.onGameStartHandler = { player in
+            self.showGameScene(with: player)
         }
         
         window.rootViewController = mapScene
     }
     
-    private func showGameScene() {
+    private func showGameScene(with enemyPlayer: Player) {
         let gameScene = GameViewController.instanceFromStoryboard(.main) as! GameViewController
         gameScene.gameConfiguration = gameConfigurations
+        gameScene.enemyPlayer = enemyPlayer
+        
         gameScene.onShotHandler = { configurations in
             gameScene.dismiss(animated: true, completion: nil)
             if let configurations = configurations {
                 self.gameConfigurations = configurations
                 self.mapScene?.gameConfiguration = configurations
+                self.mapScene?.showProjectileAnimation()
             }
         }
         
