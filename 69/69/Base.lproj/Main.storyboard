@@ -25,10 +25,10 @@
             </objects>
             <point key="canvasLocation" x="-1410" y="727"/>
         </scene>
-        <!--View Controller-->
+        <!--Game View Controller-->
         <scene sceneID="tXr-a1-R10">
             <objects>
-                <viewController storyboardIdentifier="ViewController" modalTransitionStyle="crossDissolve" id="BV1-FR-VrT" customClass="ViewController" customModule="_9" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ViewController" modalTransitionStyle="crossDissolve" id="BV1-FR-VrT" customClass="GameViewController" customModule="_9" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="U0K-SW-4ec">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -101,11 +101,11 @@
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1mZ-S9-bXT">
                                                         <rect key="frame" x="0.0" y="0.0" width="112.5" height="324"/>
                                                         <subviews>
-                                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="powerIndicator" translatesAutoresizingMaskIntoConstraints="NO" id="SeV-Zz-aPu">
-                                                                <rect key="frame" x="32" y="8" width="48.5" height="308"/>
+                                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="powerIndicator" translatesAutoresizingMaskIntoConstraints="NO" id="SeV-Zz-aPu">
+                                                                <rect key="frame" x="32" y="32" width="48.5" height="260"/>
                                                             </imageView>
                                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="powerPoint" translatesAutoresizingMaskIntoConstraints="NO" id="x7T-1R-Lah">
-                                                                <rect key="frame" x="32" y="143.5" width="48" height="37"/>
+                                                                <rect key="frame" x="32" y="143.5" width="48.5" height="37"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" secondItem="x7T-1R-Lah" secondAttribute="height" multiplier="48:37" id="zcP-xK-UJt"/>
                                                                 </constraints>
@@ -115,9 +115,10 @@
                                                         <constraints>
                                                             <constraint firstItem="x7T-1R-Lah" firstAttribute="centerX" secondItem="SeV-Zz-aPu" secondAttribute="centerX" id="1QQ-Xe-jZ5"/>
                                                             <constraint firstItem="SeV-Zz-aPu" firstAttribute="leading" secondItem="1mZ-S9-bXT" secondAttribute="leading" constant="32" id="KJn-lx-VXI"/>
-                                                            <constraint firstItem="SeV-Zz-aPu" firstAttribute="top" secondItem="1mZ-S9-bXT" secondAttribute="top" constant="8" id="QN8-ik-hYU"/>
+                                                            <constraint firstItem="SeV-Zz-aPu" firstAttribute="top" secondItem="1mZ-S9-bXT" secondAttribute="top" constant="32" id="QN8-ik-hYU"/>
                                                             <constraint firstItem="x7T-1R-Lah" firstAttribute="centerY" secondItem="SeV-Zz-aPu" secondAttribute="centerY" id="Xiz-yB-puq"/>
-                                                            <constraint firstAttribute="bottom" secondItem="SeV-Zz-aPu" secondAttribute="bottom" constant="8" id="eeV-oH-XUi"/>
+                                                            <constraint firstAttribute="bottom" secondItem="SeV-Zz-aPu" secondAttribute="bottom" constant="32" id="eeV-oH-XUi"/>
+                                                            <constraint firstItem="x7T-1R-Lah" firstAttribute="width" secondItem="SeV-Zz-aPu" secondAttribute="width" id="jq8-Jv-GCo"/>
                                                             <constraint firstAttribute="trailing" secondItem="SeV-Zz-aPu" secondAttribute="trailing" constant="32" id="lGq-7a-Ndd"/>
                                                         </constraints>
                                                     </view>

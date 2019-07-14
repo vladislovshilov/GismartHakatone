@@ -11,11 +11,11 @@ import SceneKit
 import ARKit
 import CoreMotion
 
-final class ViewController: UIViewController,
-                            ARSCNViewDelegate, CAAnimationDelegate {
+final class GameViewController: UIViewController,
+                                ARSCNViewDelegate {
     
+    // MARK: - IBOutlet's
     @IBOutlet private var sceneView: ARSCNView!
-    //@IBOutlet private weak var distanceLabel: UILabel!
     @IBOutlet private weak var angleLabel: UILabel!
     @IBOutlet private weak var projectileView: UIView!
     @IBOutlet private weak var projectileImage: UIImageView!
@@ -25,16 +25,20 @@ final class ViewController: UIViewController,
     
     @IBOutlet private weak var weaponAmountLabel: UILabel!
     
+    // MARK: - Properties
     private let sceneNames = ["CoffeeV", "CoffeeH"]
     private let nodeName = "Coffee"
     
-    private var isPowerViewShouldAnimating = false
+    private var power: CGFloat = 50
+    private var isPointMovesUp = true
+    private var minPoint: CGFloat!
+    private var maxPoint: CGFloat!
     
     private var motion: CMMotionManager!
     private var timer: Timer!
     private var animationTimer: Timer!
-    private var lastAccData: CMAccelerometerData?
     
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         motion = CMMotionManager()
@@ -54,35 +58,22 @@ final class ViewController: UIViewController,
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        startAccelerometers()
         
-        // Create a session configuration
         let configuration = ARWorldTrackingConfiguration()
         configuration.planeDetection = .horizontal
         
-        // Run the view's session
         sceneView.session.run(configuration)
+        startAccelerometers()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        stopAccelerometers()
         
-        // Pause the view's session
         sceneView.session.pause()
+        stopAccelerometers()
     }
     
     // MARK: - ARSCNViewDelegate
-    
-    /*
-     // Override to create and configure nodes for anchors added to the view's session.
-     func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-     let node = SCNNode()
-     
-     return node
-     }
-     */
-    
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
         
@@ -97,8 +88,23 @@ final class ViewController: UIViewController,
         // Reset tracking and/or remove existing anchors if consistent tracking is required
         
     }
+}
+
+// MARK: - Support methods
+
+extension GameViewController {
+    // MARK: Power indicator animation
+    private func startPowerPointAnimation() {
+        minPoint = powerIndicatorImage.frame.origin.y
+        maxPoint = minPoint + powerIndicatorImage.frame.height
+        createAnimationTimer()
+    }
     
-    private func createTimer() {
+    private func stopPowerPointAnimation() {
+        cancelAnimationTimer()
+    }
+    
+    private func createAnimationTimer() {
         if animationTimer == nil {
             animationTimer = Timer.scheduledTimer(timeInterval: 1.0/60,
                                                   target: self,
@@ -109,15 +115,10 @@ final class ViewController: UIViewController,
         }
     }
     
-    private func cancelTimer() {
+    private func cancelAnimationTimer() {
         animationTimer?.invalidate()
         animationTimer = nil
     }
-    
-    var power: CGFloat = 50
-    var isPointMovesUp = true
-    var minPoint: CGFloat!
-    var maxPoint: CGFloat!
     
     @objc private func updateTimer() {
         if power >= 100 { isPointMovesUp = false }
@@ -137,54 +138,11 @@ final class ViewController: UIViewController,
             guard let `self` = self else { return }
             
             let newPoint = (self.maxPoint - self.minPoint) / 100.0 * self.power
-            print(self.power)
-            self.powerPointImage.center.y = newPoint
+            self.powerPointImage.center.y = newPoint + self.powerPointImage.frame.height
         }
     }
-
-    private func startPowerPointAnimation() {
-        minPoint = powerIndicatorImage.frame.origin.y
-        maxPoint = minPoint + powerIndicatorImage.frame.height
-        createTimer()
-        
-//        let x = powerIndicatorImage.frame.origin.x + powerPointImage.frame.width / 2
-//        let minPoint = powerIndicatorImage.frame.origin.y
-//        let maxPoint = minPoint + powerIndicatorImage.frame.height
-//        isPowerViewShouldAnimating = true
-//
-//        let animation = CABasicAnimation(keyPath: "position")
-//        animation.fromValue = CGPoint(x: x,
-//                                      y: minPoint)
-//        animation.toValue = CGPoint(x: x,
-//                                    y: maxPoint)
-//        animation.duration = 2
-//        animation.autoreverses = true
-//        animation.repeatCount = .infinity
-//        powerPointImage.layer.add(animation, forKey: nil)
-        
-//        UIView.animate(withDuration: 1.0,
-//                       animations: { () -> Void in
-//                        self.powerPointImage.center.y = maxPoint
-//
-//        }, completion: { _ in
-//            if !self.isPowerViewShouldAnimating { return }
-//            UIView.animate(withDuration: 2.0,
-//                           delay: 0.0,
-//                           options: [.autoreverse, .repeat],
-//                           animations: { () -> Void in
-//                            self.powerPointImage.center.y = minPoint
-//
-//            }, completion: { _ in
-//                print("comp \(self.powerPointImage.bounds.origin.y)")
-//                self.powerPointImage.center.y = self.powerIndicatorImage.center.y
-//            })
-//        })
-    }
     
-    private func stopPowerPointAnimation() {
-        cancelTimer()
-    }
-    
+    // MARK: UITapGestureRecognizer
     @objc private func longPressed(gesture: UITapGestureRecognizer) {
         switch gesture.state {
         case .began:
@@ -207,6 +165,7 @@ final class ViewController: UIViewController,
         }
     }
     
+    // MARK: Scene action's
     private func getParent(_ nodeFound: SCNNode?) -> SCNNode? {
         if let node = nodeFound {
             if node.name == nodeName {
@@ -258,7 +217,7 @@ final class ViewController: UIViewController,
 
 // MARK: - Accelerometer
 
-extension ViewController {
+extension GameViewController {
     private func startAccelerometers() {
         if self.motion.isAccelerometerAvailable {
             self.motion.accelerometerUpdateInterval = 1.0 / 10  // 10 Hz
@@ -278,39 +237,25 @@ extension ViewController {
         if self.timer != nil {
             self.timer?.invalidate()
             self.timer = nil
-            
+
             self.motion.stopGyroUpdates()
         }
     }
     
     private func updateAccelerationData(_ accelerationData: CMAccelerometerData) {
-        let x = accelerationData.acceleration.x
         let y = accelerationData.acceleration.y
         let z = accelerationData.acceleration.z
         
         let roll = atan2(y, z) * 57.3
-        
-        lastAccData = accelerationData
-        
-//        print("New data")
-//        print(roll)
-//        print(pitch)
-        
         let angle = 90 + Int(roll.rounded())
         
         DispatchQueue.main.async { [weak self] in
             guard let `self` = self else { return }
-            if angle < 0 {
+            if angle < 0 || angle > 90 {
                 self.angleLabel.text = "0°"
-                //self.distanceLabel.text = "0m"
-            }
-            else if angle > 90 {
-                self.angleLabel.text = "\(angle)°"
-                //self.distanceLabel.text = "0m"
             }
             else {
                 self.angleLabel.text = "\(angle)°"
-                //self.distanceLabel.text = "\(angle * 20)m"
             }
         }
     }
