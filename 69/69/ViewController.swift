@@ -12,13 +12,19 @@ import ARKit
 import CoreMotion
 
 final class ViewController: UIViewController,
-ARSCNViewDelegate {
+                            ARSCNViewDelegate {
     
     @IBOutlet private var sceneView: ARSCNView!
-    @IBOutlet private weak var distanceLabel: UILabel!
+    //@IBOutlet private weak var distanceLabel: UILabel!
     @IBOutlet private weak var angleLabel: UILabel!
+    @IBOutlet private weak var projectileView: UIView!
+    @IBOutlet private weak var projectileImage: UIImageView!
     
-    private var grids = [Grid]()
+    @IBOutlet private weak var powerIndicatorImage: UIImageView!
+    @IBOutlet private weak var powerPointImage: UIImageView!
+    
+    
+    @IBOutlet private weak var weaponAmountLabel: UILabel!
     
     private let sceneNames = ["CoffeeV", "CoffeeH"]
     private let nodeName = "Coffee"
@@ -39,6 +45,9 @@ ARSCNViewDelegate {
         
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapped))
         sceneView.addGestureRecognizer(gestureRecognizer)
+        
+        let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(gesture:)))
+        projectileView.addGestureRecognizer(longPressGestureRecognizer)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -85,6 +94,42 @@ ARSCNViewDelegate {
     func sessionInterruptionEnded(_ session: ARSession) {
         // Reset tracking and/or remove existing anchors if consistent tracking is required
         
+    }
+    
+    private func startAnimationPowerPoint() {
+        let minPoint = powerIndicatorImage.frame.origin.y
+        let maxPoint = minPoint + powerIndicatorImage.frame.height
+        
+        UIView.animate(withDuration: 1.0,
+                       animations: { () -> Void in
+                        self.powerPointImage.center.y = maxPoint
+                        
+        }, completion: { _ in
+            UIView.animate(withDuration: 2.0,
+                           delay: 0.0,
+                           options: [.autoreverse, .repeat],
+                           animations: { () -> Void in
+                            self.powerPointImage.center.y = minPoint
+                            
+            }, completion: { _ in
+                self.powerPointImage.center.y = self.powerIndicatorImage.center.y
+            })
+        })
+    }
+    
+    private func stopAnimationPowerPoint() {
+        powerPointImage.layer.removeAllAnimations()
+    }
+    
+    @objc private func longPressed(gesture: UITapGestureRecognizer) {
+        switch gesture.state {
+        case .began:
+            startAnimationPowerPoint()
+        case .ended:
+            stopAnimationPowerPoint()
+        default:
+            return
+        }
     }
 
     @objc private func tapped(gesture: UITapGestureRecognizer) {
@@ -180,7 +225,6 @@ extension ViewController {
         let z = accelerationData.acceleration.z
         
         let roll = atan2(y, z) * 57.3
-        let pitch = atan2(-x, sqrt(y * y + z * z)) * 57.3
         
         lastAccData = accelerationData
         
@@ -194,15 +238,15 @@ extension ViewController {
             guard let `self` = self else { return }
             if angle < 0 {
                 self.angleLabel.text = "0°"
-                self.distanceLabel.text = "0m"
+                //self.distanceLabel.text = "0m"
             }
             else if angle > 90 {
                 self.angleLabel.text = "\(angle)°"
-                self.distanceLabel.text = "0m"
+                //self.distanceLabel.text = "0m"
             }
             else {
                 self.angleLabel.text = "\(angle)°"
-                self.distanceLabel.text = "\(angle * 20)m"
+                //self.distanceLabel.text = "\(angle * 20)m"
             }
         }
     }
