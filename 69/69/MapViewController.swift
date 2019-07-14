@@ -19,8 +19,10 @@ final class MapViewController: UIViewController,
                                IMapScene {
     // MARK: - Properties
     private var mapView: GMSMapView?
+    private var playersMarkers = [GMSMarker]()
     
     var gameConfiguration: GameConfiguration?
+    var players = [Player]()
     
     // MARK: Flow handlers
     var onGameStartHandler: (() -> Void)?
@@ -28,11 +30,7 @@ final class MapViewController: UIViewController,
     // MARK: - Lifecycle
     override func loadView() {
         setupMap()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        print(gameConfiguration?.power)
+        addPlayersOnMap()
     }
     
     // MARK: - Support methods
@@ -41,10 +39,17 @@ final class MapViewController: UIViewController,
         mapView = GMSMapView.map(withFrame: CGRect.zero, camera: camera)
         mapView?.delegate = self
         view = mapView
-        
-        let marker = GMSMarker()
-        marker.position = CLLocationCoordinate2D(latitude: 53.846243, longitude: 27.696686)
-        marker.map = mapView
+    }
+    
+    private func addPlayersOnMap() {
+        players.forEach { player in
+            let marker = GMSMarker()
+            marker.icon = player.iconImage
+            marker.position = player.location.toCoordinates()
+            
+            marker.map = mapView
+            playersMarkers.append(marker)
+        }
     }
 }
 

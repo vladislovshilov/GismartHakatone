@@ -20,6 +20,8 @@
 		512EA49C22DB43340056E8C1 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512EA49B22DB43340056E8C1 /* UIViewController.swift */; };
 		512EA49E22DB434A0056E8C1 /* UIStoryboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512EA49D22DB434A0056E8C1 /* UIStoryboard.swift */; };
 		512EA4A422DB45EF0056E8C1 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512EA4A322DB45EF0056E8C1 /* Coordinator.swift */; };
+		512EA4A722DB53850056E8C1 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512EA4A622DB53850056E8C1 /* Player.swift */; };
+		512EA4A922DB53D70056E8C1 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512EA4A822DB53D70056E8C1 /* Location.swift */; };
 		81270D720EEF2CC87D0A6EF0 /* Pods_69.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8519DE2F853E0F48712C4E1C /* Pods_69.framework */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +42,8 @@
 		512EA49B22DB43340056E8C1 /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		512EA49D22DB434A0056E8C1 /* UIStoryboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIStoryboard.swift; sourceTree = "<group>"; };
 		512EA4A322DB45EF0056E8C1 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
+		512EA4A622DB53850056E8C1 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		512EA4A822DB53D70056E8C1 /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		5281320AD4EB8E07BC7B5E85 /* Pods-69.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-69.debug.xcconfig"; path = "Pods/Target Support Files/Pods-69/Pods-69.debug.xcconfig"; sourceTree = "<group>"; };
 		8519DE2F853E0F48712C4E1C /* Pods_69.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_69.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -132,6 +136,8 @@
 			children = (
 				512EA49722DB41D70056E8C1 /* GameConfiguration.swift */,
 				512EA49522DB41600056E8C1 /* SlingshotType.swift */,
+				512EA4A622DB53850056E8C1 /* Player.swift */,
+				512EA4A822DB53D70056E8C1 /* Location.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -268,11 +274,13 @@
 			files = (
 				512EA49C22DB43340056E8C1 /* UIViewController.swift in Sources */,
 				512EA49622DB41600056E8C1 /* SlingshotType.swift in Sources */,
+				512EA4A922DB53D70056E8C1 /* Location.swift in Sources */,
 				51116B4222D9F8D30094F01F /* GameViewController.swift in Sources */,
 				512EA49E22DB434A0056E8C1 /* UIStoryboard.swift in Sources */,
 				51116B3E22D9F8D30094F01F /* AppDelegate.swift in Sources */,
 				512EA49822DB41D70056E8C1 /* GameConfiguration.swift in Sources */,
 				51116B5C22DA21940094F01F /* MapViewController.swift in Sources */,
+				512EA4A722DB53850056E8C1 /* Player.swift in Sources */,
 				512EA4A422DB45EF0056E8C1 /* Coordinator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

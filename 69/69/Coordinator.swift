@@ -35,6 +35,8 @@ extension Coordinator: Coordinatable {
     private func showMapScene() {
         mapScene = MapViewController.instanceFromStoryboard(.main) as! MapViewController
         mapScene?.gameConfiguration = gameConfigurations
+        mapScene?.players = createPlayers()
+        
         mapScene?.onGameStartHandler = {
             self.showGameScene()
         }
@@ -54,5 +56,32 @@ extension Coordinator: Coordinatable {
         }
         
         window.rootViewController?.present(gameScene, animated: true, completion: nil)
+    }
+    
+    private func createPlayers() -> [Player] {
+        var players = [1, 2, 3].map({ index -> Player in
+            let longitude = Double.random(in: 27.65...27.71)
+            let latitude = Double.random(in: 53.82...53.85)
+            let location = Location(longitude: longitude,
+                                    latitude: latitude)
+            
+            return Player(id: index,
+                          iconImage: UIImage(named: "iconImagePlaceholder"),
+                          name: "Jane",
+                          level: index + 1,
+                          health: 100,
+                          location: location)
+        })
+        
+        let location = Location(longitude: 27.696686,
+                                latitude: 53.846243)
+        players.append(Player(id: 5,
+                              iconImage: UIImage(named: "iconImagePlaceholder"),
+                              name: "Ne Jane",
+                              level: 5,
+                              health: 100,
+                              location: location))
+        
+        return players
     }
 }
