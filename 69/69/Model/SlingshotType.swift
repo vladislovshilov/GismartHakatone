@@ -14,9 +14,9 @@ enum SlingshotType {
     var maxDistance: Double {
         switch self {
         case .common:
-            return 10000
-        case .double:
             return 20000
+        case .double:
+            return 40000
         }
     }
 }

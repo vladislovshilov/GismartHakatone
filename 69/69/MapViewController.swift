@@ -11,6 +11,7 @@ import GoogleMaps
 
 protocol IMapScene: UIViewController {
     var onGameStartHandler: ((_ enemyPlayer: Player) -> Void)? { get set }
+    var onGameContinueHandler: (() -> Void)? { get set }
     
     var gameConfiguration: GameConfiguration? { get set }
     
@@ -31,6 +32,7 @@ IMapScene {
     
     // MARK: Flow handlers
     var onGameStartHandler: ((_ enemyPlayer: Player) -> Void)?
+    var onGameContinueHandler: (() -> Void)?
     
     // MARK: - Lifecycle
     override func loadView() {
@@ -49,7 +51,32 @@ IMapScene {
         let cameraUpdate = GMSCameraUpdate.fit(boundingBox)
         
         mapView?.moveCamera(cameraUpdate)
-        showCheckinAnimation(from: currentLocation, to: enemyLocation)
+        
+        let projectileCoordinates = calculateProjectileCoordinates()
+        showChickenAnimation(from: currentLocation, to: projectileCoordinates)
+    }
+    
+    private func calculateProjectileCoordinates() -> CLLocationCoordinate2D {
+        guard let gameConfiguration = gameConfiguration else {
+            return enemyPlayer!.location.toCoordinates()
+        }
+        
+        let supposedIdealAngle = 45 * gameConfiguration.distanceToEnemy / gameConfiguration.slingshotType.maxDistance
+        let supposedRoundedAngle = Int(supposedIdealAngle)
+        print(supposedRoundedAngle)
+        
+        if supposedRoundedAngle > gameConfiguration.angle - 5 &&
+            supposedRoundedAngle < gameConfiguration.angle + 5 {
+            return enemyPlayer!.location.toCoordinates()
+        }
+        else {
+            let currentLocation = mapView!.myLocation!.coordinate
+            let enemyCoordinates = enemyPlayer!.location.toCoordinates()
+            let boundingBox = GMSCoordinateBounds(coordinate: currentLocation,
+                                                  coordinate: enemyCoordinates)
+            
+            return boundingBox.southWest
+        }
     }
     
     // MARK: - Support methods
@@ -72,11 +99,12 @@ IMapScene {
         }
     }
     
-    private func showCheckinAnimation(from startCoordinates: CLLocationCoordinate2D, to endCoordinates: CLLocationCoordinate2D) {
+    private func showChickenAnimation(from startCoordinates: CLLocationCoordinate2D, to endCoordinates: CLLocationCoordinate2D) {
         if chickenMarker == nil {
+            let image = UIImage(named:"chicken")
+            
             chickenMarker = GMSMarker()
             chickenMarker!.position = startCoordinates
-            let image = UIImage(named:"chicken")
             chickenMarker!.icon = image
             chickenMarker!.setIconSize(scaledToSize: CGSize(width: 40, height: 50))
             chickenMarker!.map = mapView
@@ -92,20 +120,11 @@ IMapScene {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
                         self?.chickenMarker?.map = nil
                         self?.chickenMarker = nil
+                        self?.onGameContinueHandler?()
                     }
                 })
             }
         }
-    }
-}
-
-extension GMSMarker {
-    func setIconSize(scaledToSize newSize: CGSize) {
-        UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
-        icon?.draw(in: CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height))
-        let newImage: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
-        UIGraphicsEndImageContext()
-        icon = newImage
     }
 }
 
@@ -118,12 +137,29 @@ extension MapViewController: GMSMapViewDelegate {
             mapView.animate(to: newCameraPosition)
             
             enemyPlayer = players[playerIndex]
+            let enemyLocation = CLLocation(latitude: enemyPlayer!.location.latitude,
+                                           longitude: enemyPlayer!.location.longitude)
+            if let distanceToEnemy = mapView.myLocation?.distance(from: enemyLocation) {
+                gameConfiguration?.distanceToEnemy = distanceToEnemy
+            }
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            gameConfiguration?.isGameStarted = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                guard let `self` = self else { return }
                 self.onGameStartHandler?(self.enemyPlayer!)
             }
         }
         
         return true
+    }
+}
+
+extension GMSMarker {
+    func setIconSize(scaledToSize newSize: CGSize) {
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
+        icon?.draw(in: CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height))
+        let newImage: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        icon = newImage
     }
 }

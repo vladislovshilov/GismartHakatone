@@ -40,11 +40,25 @@ extension Coordinator: Coordinatable {
         mapScene?.onGameStartHandler = { player in
             self.showGameScene(with: player)
         }
+        mapScene?.onGameContinueHandler = {
+            guard let gameScene = self.gameScene else { return }
+            self.showGameScene(gameScene)
+        }
         
         window.rootViewController = mapScene
     }
     
     private func showGameScene(with enemyPlayer: Player) {
+        gameScene = createGameScene(with: enemyPlayer)
+        guard let scene = gameScene else { return }
+        showGameScene(scene)
+    }
+    
+    private func showGameScene(_ scene: UIViewController) {
+        window.rootViewController?.present(scene, animated: true, completion: nil)
+    }
+    
+    private func createGameScene(with enemyPlayer: Player) -> GameViewController {
         let gameScene = GameViewController.instanceFromStoryboard(.main) as! GameViewController
         gameScene.gameConfiguration = gameConfigurations
         gameScene.enemyPlayer = enemyPlayer
@@ -58,7 +72,7 @@ extension Coordinator: Coordinatable {
             }
         }
         
-        window.rootViewController?.present(gameScene, animated: true, completion: nil)
+        return gameScene
     }
     
     private func createPlayers() -> [Player] {

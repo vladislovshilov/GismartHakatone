@@ -9,6 +9,7 @@
 import Foundation
 
 protocol IGameConfiguration {
+    var isGameStarted: Bool { get set }
     var slingshotType: SlingshotType { get set }
     var distanceToEnemy: Double { get set }
     
@@ -17,8 +18,10 @@ protocol IGameConfiguration {
 }
 
 final class GameConfiguration: IGameConfiguration {
+    var isGameStarted = false
     var slingshotType = SlingshotType.common
     var distanceToEnemy = Double()
+    
     var power = Int()
     var angle = Int()
 }
