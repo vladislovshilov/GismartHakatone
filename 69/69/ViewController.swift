@@ -12,7 +12,7 @@ import ARKit
 import CoreMotion
 
 final class ViewController: UIViewController,
-                            ARSCNViewDelegate {
+ARSCNViewDelegate {
     
     @IBOutlet private var sceneView: ARSCNView!
     @IBOutlet private weak var distanceLabel: UILabel!
@@ -20,15 +20,16 @@ final class ViewController: UIViewController,
     
     private var grids = [Grid]()
     
-    private var nodeModel: SCNNode!
-    private let nodeName = "Circle_001"
+    private let sceneNames = ["CoffeeV", "CoffeeH"]
+    private let nodeName = "Coffee"
     
-    private let motion = CMMotionManager()
+    private var motion: CMMotionManager!
     private var timer: Timer!
     private var lastAccData: CMAccelerometerData?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        motion = CMMotionManager()
         
         let scene = SCNScene()
         sceneView.delegate = self
@@ -36,10 +37,8 @@ final class ViewController: UIViewController,
         sceneView.debugOptions = ARSCNDebugOptions.showFeaturePoints
         sceneView.scene = scene
         
-        let modelScene = SCNScene(named: "test.scnassets/CoffeeCup.scn")!
-        nodeModel = modelScene.rootNode.childNode(
-            withName: nodeName, recursively: true)
-        nodeModel.scale = SCNVector3(x: 0.1, y: 0.1, z: 0.1)
+        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapped))
+        sceneView.addGestureRecognizer(gestureRecognizer)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -89,32 +88,32 @@ final class ViewController: UIViewController,
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let location = touches.first!.location(in: sceneView)
-        var hitTestOptions = [SCNHitTestOption: Any]()
-        hitTestOptions[SCNHitTestOption.boundingBoxOnly] = true
-        let hitResults: [SCNHitTestResult]  =
-            sceneView.hitTest(location, options: hitTestOptions)
-        if let hit = hitResults.first {
-            if let node = getParent(hit.node) {
-                node.removeFromParentNode()
-                self.dismiss(animated: true, completion: nil)
-                return
-            }
-        }
-        
-        let hitResultsFeaturePoints: [ARHitTestResult] =
-            sceneView.hitTest(location, types: .featurePoint)
-        if let hit = hitResultsFeaturePoints.first {
-            // Get a transformation matrix with the euler angle of the camera
-            let rotate = simd_float4x4(SCNMatrix4MakeRotation(sceneView.session.currentFrame!.camera.eulerAngles.y, 0, 1, 0))
-            
-            // Combine both transformation matrices
-            let finalTransform = simd_mul(hit.worldTransform, rotate)
-            
-            // Use the resulting matrix to position the anchor
-            sceneView.session.add(anchor: ARAnchor(transform: finalTransform))
-            // sceneView.session.add(anchor: ARAnchor(transform: hit.worldTransform))
-        }
+        //        let location = touches.first!.location(in: sceneView)
+        //        var hitTestOptions = [SCNHitTestOption: Any]()
+        //        hitTestOptions[SCNHitTestOption.boundingBoxOnly] = true
+        //        let hitResults: [SCNHitTestResult]  =
+        //            sceneView.hitTest(location, options: hitTestOptions)
+        //        if let hit = hitResults.first {
+        //            if let node = getParent(hit.node) {
+        //                node.removeFromParentNode()
+        //                self.dismiss(animated: true, completion: nil)
+        //                return
+        //            }
+        //        }
+        //
+        //        let hitResultsFeaturePoints: [ARHitTestResult] =
+        //            sceneView.hitTest(location, types: .featurePoint)
+        //        if let hit = hitResultsFeaturePoints.first {
+        //            // Get a transformation matrix with the euler angle of the camera
+        //            let rotate = simd_float4x4(SCNMatrix4MakeRotation(sceneView.session.currentFrame!.camera.eulerAngles.y, 0, 1, 0))
+        //
+        //            // Combine both transformation matrices
+        //            let finalTransform = simd_mul(hit.worldTransform, rotate)
+        //
+        //            // Use the resulting matrix to position the anchor
+        //            sceneView.session.add(anchor: ARAnchor(transform: finalTransform))
+        //            // sceneView.session.add(anchor: ARAnchor(transform: hit.worldTransform))
+        //        }
     }
     
     private func getParent(_ nodeFound: SCNNode?) -> SCNNode? {
@@ -128,37 +127,62 @@ final class ViewController: UIViewController,
         return nil
     }
     
-//    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-//        if !anchor.isKind(of: ARPlaneAnchor.self) {
-//            DispatchQueue.main.async {
-//                let modelClone = self.nodeModel.clone()
-//                modelClone.position = SCNVector3Zero
-//
-//                // Add model as a child of the node
-//                node.addChildNode(modelClone)
-//            }
-//        }
-//    }
+    //    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+    //        if !anchor.isKind(of: ARPlaneAnchor.self) {
+    //            DispatchQueue.main.async {
+    //                let modelClone = self.nodeModel.clone()
+    //                modelClone.position = SCNVector3Zero
+    //
+    //                // Add model as a child of the node
+    //                node.addChildNode(modelClone)
+    //            }
+    //        }
+    //    }
     
     
-    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        if let planeAnchor = anchor as? ARPlaneAnchor {
-            let grid = Grid(anchor: planeAnchor)
-            self.grids.append(grid)
-            node.addChildNode(grid)
+    //    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+    //        if let planeAnchor = anchor as? ARPlaneAnchor {
+    //            let grid = Grid(anchor: planeAnchor)
+    //            self.grids.append(grid)
+    //            node.addChildNode(grid)
+    //        }
+    //    }
+    //
+    //    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+    //        let grid = self.grids.filter { grid in
+    //            return grid.anchor.identifier == anchor.identifier
+    //            }.first
+    //
+    //        guard let foundGrid = grid else {
+    //            return
+    //        }
+    //
+    //        foundGrid.update(anchor: anchor as! ARPlaneAnchor)
+    //    }
+    
+    @objc private func tapped(gesture: UITapGestureRecognizer) {
+        let touchPosition = gesture.location(in: sceneView)
+        let hitTestResult = sceneView.hitTest(touchPosition, types: .existingPlaneUsingExtent)
+        
+        if !hitTestResult.isEmpty {
+            guard let hitResult = hitTestResult.first else { return }
+            DispatchQueue.main.async { [weak self] in
+                self?.addGarbage(hitTestResult: hitResult)
+            }
         }
     }
     
-    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        let grid = self.grids.filter { grid in
-            return grid.anchor.identifier == anchor.identifier
-            }.first
+    private func addGarbage(hitTestResult: ARHitTestResult) {
+        let randomIndex = Int.random(in: 0...1)
+        guard let scene = SCNScene(named: "test.scnassets/" + sceneNames[randomIndex] + ".scn"),
+            let garbageNode = scene.rootNode.childNode(withName: nodeName, recursively: true) else { return }
         
-        guard let foundGrid = grid else {
-            return
-        }
+        let position = SCNVector3(hitTestResult.worldTransform.columns.3.x,
+                                  hitTestResult.worldTransform.columns.3.y,
+                                  hitTestResult.worldTransform.columns.3.z)
+        garbageNode.position = position
         
-        foundGrid.update(anchor: anchor as! ARPlaneAnchor)
+        sceneView.scene.rootNode.addChildNode(garbageNode)
     }
 }
 
@@ -199,9 +223,9 @@ extension ViewController {
         
         lastAccData = accelerationData
         
-        print("New data")
-        print(roll)
-        print(pitch)
+//        print("New data")
+//        print(roll)
+//        print(pitch)
         
         let angle = 90 + Int(roll.rounded())
         

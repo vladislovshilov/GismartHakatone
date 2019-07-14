@@ -31,7 +31,7 @@ final class MapViewController: UIViewController {
 extension MapViewController: GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
         let controller = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ViewController")
-        self.present(controller, animated: true, completion: nil)
+        present(controller, animated: true, completion: nil)
         
         return true
     }
