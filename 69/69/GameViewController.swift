@@ -40,6 +40,7 @@ final class GameViewController: UIViewController,
     
     private let sceneNames = ["CoffeeV", "CoffeeH"]
     private let nodeName = "Coffee"
+    private var modelNode: SCNNode?
     
     private var power: CGFloat = 50
     private var isPointMovesUp = true
@@ -65,6 +66,10 @@ final class GameViewController: UIViewController,
         sceneView.showsStatistics = true
         sceneView.debugOptions = ARSCNDebugOptions.showFeaturePoints
         sceneView.scene = scene
+        
+        let arrow = makeBillboardNode("⬇️".image()!)
+        arrow.position = SCNVector3Make(50, 4, 10)
+        scene.rootNode.addChildNode(arrow)
         
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapped))
         sceneView.addGestureRecognizer(gestureRecognizer)
@@ -241,6 +246,14 @@ extension GameViewController {
         
         sceneView.scene.rootNode.addChildNode(garbageNode)
     }
+    
+    func makeBillboardNode(_ image: UIImage) -> SCNNode {
+        let plane = SCNPlane(width: 10, height: 10)
+        plane.firstMaterial!.diffuse.contents = image
+        let node = SCNNode(geometry: plane)
+        node.constraints = [SCNBillboardConstraint()]
+        return node
+    } 
 }
 
 // MARK: - Accelerometer
